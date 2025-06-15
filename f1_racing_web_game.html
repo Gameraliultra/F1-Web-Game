@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>F1 Racing Game</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #004400;
+      overflow: hidden;
+      touch-action: none;
+    }
+    canvas {
+      display: block;
+      margin: auto;
+      background: #007700;
+    }
+    .controls {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+    }
+    .btn {
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      text-align: center;
+      line-height: 80px;
+      font-size: 36px;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<div class="controls">
+  <div class="btn" id="leftBtn">⟲</div>
+  <div class="btn" id="rightBtn">⟳</div>
+</div>
+<script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+
+  let car = {
+    x: 400,
+    y: 300,
+    angle: 0,
+    speed: 2,
+    radius: 15
+  };
+
+  let left = false, right = false;
+
+  document.getElementById("leftBtn").ontouchstart = () => left = true;
+  document.getElementById("leftBtn").ontouchend = () => left = false;
+  document.getElementById("rightBtn").ontouchstart = () => right = true;
+  document.getElementById("rightBtn").ontouchend = () => right = false;
+
+  function update() {
+    if (left) car.angle -= 0.05;
+    if (right) car.angle += 0.05;
+    car.x += car.speed * Math.cos(car.angle);
+    car.y += car.speed * Math.sin(car.angle);
+
+    if (car.x < 0) car.x = 800;
+    if (car.x > 800) car.x = 0;
+    if (car.y < 0) car.y = 600;
+    if (car.y > 600) car.y = 0;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, 800, 600);
+    ctx.fillStyle = "#333";
+    ctx.fillRect(100, 100, 600, 400);
+
+    ctx.save();
+    ctx.translate(car.x, car.y);
+    ctx.rotate(car.angle);
+    ctx.fillStyle = "red";
+    ctx.fillRect(-15, -10, 30, 20);
+    ctx.restore();
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  loop();
+</script>
+</body>
+</html>
